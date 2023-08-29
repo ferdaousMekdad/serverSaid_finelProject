@@ -1,0 +1,8 @@
+
+#dependencies 
+node_module
+/.pnp
+.pnp.js
+
+#misc
+.env
