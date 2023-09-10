@@ -14,8 +14,7 @@ import TestModel from "./Models/testModel.js";
 const app=express();
 
 //to serve image from public
-app.use(express.static('public'));
-app.use('/images',express.static("images"))
+
 
 
 app.use(bodyParser.json({limit:"30mb",extended:true}));
@@ -31,30 +30,49 @@ mongoose.connect(process.env.MONGO_DB,
 then(()=>app.listen(process.env.PORT,()=>console.log( `server is running in port  ${process.env.PORT}`))).
 catch((error)=>console.log(error.message));
 
-const storage=multer.diskStorage({
-    destination:(req,file,cb)=>{
-        cb(null,'public/images')
-    },
-    filename:(req,file,cb)=>{
-        cb(null,file.fieldname +"_"+Date.now()+path.extname(file.originalname))
+
+
+app.post('/uplooaad',(req,res)=>{
+    const test =new TestModel({
+        _id:new mongoose.Types.ObjectId(),
+        mycoverimag:req.body.mycoverimag,
+      
+        myusername:req.body.myusername,
+        mylastname:req.body.mylastname,
+        myprofileimg:req.body.myprofileimg,
+        myAge:req.body.myAge,
+        livesin:req.body.livesin,
+        country:req.body.country,
+        worksat:req.body.worksat,
+       
+    })
+    console.log(test);
+    test.save();
+  res.send("image ipload")
+})
+app.get("/getImage", async(req,res)=>{
+    try {
+        const result = await TestModel.find();
+        res.status(200).json(result);
+        
+    } catch (error) {
+        res.status(400).json(error)
     }
+   
+
+   
 })
 
-const upload =multer({
-    storage:storage
-})
-
-app.post('/uplooaad',upload.single('file'),(req,res)=>{
-    
-    TestModel.create({image:req.file.filename})
-    .then(result=>res.json(result))
-    .catch(err=>console.log(err))
-    
-})
-app.get("/getImage",(req,res)=>{
-    TestModel.find()
-    .then(users=>res.json(users))
-    .catch(err=>res.json(err))
+app.put("/updatetest/:id",async(req,res)=>{
+    const postId=req.params.id
+    try {
+        const post=await TestModel.findById(postId)
+        await post.updateOne({$set:req.body})
+        res.status(201).json("it don")
+        console.log(post)
+    } catch (error) {
+        res.status(404).json("you cant apdatet")
+    }
 })
 
 

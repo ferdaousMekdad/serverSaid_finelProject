@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 const recipeSchema=mongoose.Schema({
     username:{
         type:String,
-        required:true,
+        
     },
     userimage:{
         type:String,
-        required:true,
+      
     },
     name:{
         type:String,

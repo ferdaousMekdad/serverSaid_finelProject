@@ -7,8 +7,9 @@ import { RecipesModel } from "../Models/RecipeModel.js";
 //creat a Recipe
 
 export const CreateRecipe=async(req,res)=>{
+  
 const recipe =new RecipesModel({
-    _id:new mongoose.Types.ObjectId(),
+    
     username:req.body.username,
     userimage:req.body.userimage,
     name:req.body.name,
@@ -37,7 +38,7 @@ try {
 //get RecipeModel
 
 export const GetRecipe=async(req,res)=>{
-   
+    const Id=req.params.id
 
     try {
         const result=await RecipesModel.find();
@@ -46,6 +47,21 @@ export const GetRecipe=async(req,res)=>{
         res.status(500).json(error)
     }
 };
+
+//updat a recipe 
+export const updateRecipe =async(req,res)=>{
+    const postId=req.params.id
+    try {
+        const post=await RecipesModel.findById(postId)
+        await post.updateOne({$set:req.body})
+        res.status(201).json("it don")
+        console.log(post)
+    } catch (error) {
+        res.status(404).json("you cant apdatet")
+    }
+}
+
+
 
 //creat a now Post 
 export const CreatePost = async(req,res)=>{
@@ -81,7 +97,7 @@ export const updatePost=async(req,res)=>{
     const {userId}=req.body
 
     try {
-        const post =await PostModel.findById(postId)
+        const post =await RecipesModel.findById(postId)
         if(post.userId === userId)
         {
             await post.updateOne({$set : req.body})

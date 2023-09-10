@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken"
 
 export const GetUserInfo=async(req,res)=>{
     const id=req.params.id; 
+    
     try {
         const result=await UserModel.findById(id);
         res.status(200).json(result);
@@ -18,7 +19,38 @@ export const GetUserInfo=async(req,res)=>{
 
 
 
+//create post user 
 
+
+export const AddUserinfo=async(req,res)=>{
+   
+        const user =new UserModel({
+            
+           
+            profilePicture:req.body.profilePicture,
+            firstname:req.body.firstname,
+           
+            coverPicture:req.body.coverPicture,
+            lastname:req.body.lastname,
+            livesin:req.body.livesin,
+            country:req.body.country,
+            Age:req.body.Age,
+          
+        });
+        console.log(user);
+        
+        try {
+            
+            const result =await user.save();
+            res.status(201).json({ result
+            })
+        } catch (error) {
+            res.status(500).json(error)
+        }
+
+    }
+    
+   
 
 
 
@@ -50,32 +82,53 @@ export const GetUser =async(req,res)=>{
 
 export const updateUser =async(req,res)=>{
     const id =req.params.id;
-
-    const {_id,currentUseAdminStatuse,password}=req.body;
-    if(id===_id){
-        try {
-
+    const n =new UserModel({
+       
+        username:req.body.username,
+        Age:req.body.Age,
+        });
+        console.log(n)
+    try {
+        const user =await UserModel.findById(id)
+    const newuser= await user.updateOne({$set:
+        { username:req.body.username,
+            profilePicture:req.body.profilePicture,
+            firstname:req.body.firstname,
+        
+            coverPicture:req.body.coverPicture,
+            lastname:req.body.lastname,
+            livesin:req.body.livesin,
+            country:req.body.country,
+            Age:req.body.Age,
+            worksAt:req.body.worksAt,
+        },new:true})
+        
+        
+        {/**
+        const {_id,password}=req.body;
+        if(id===_id){
             if(password)
             {
                 const salt = await bcrypt.genSalt(10);
                 req.body.password =await bcrypt.hash(password,salt);
             }
            
-              const user =await UserModel.findByIdAndUpdate(id,req.body,{new:true})
            const token=jwt.sign( 
             {username:user.username,id:user._id},
             process.env.JWT_KEY,
             {expiresIn:"3h"}
            )
-           user.save()
-              res.status(200).json(user,token)
-              console.log(user)
+        
+        } else{
+            res.status(403).json("you can only update your own profile")
+        } 
+        */}
+          
+              res.status(200).json(newuser.Age)
+              console.log(newuser)
         } catch (error) {
             res.status(500).json(error)
         } 
-    } else{
-        res.status(403).json("you can only update your own profile")
-    } 
 
 }
 
